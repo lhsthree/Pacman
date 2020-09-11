@@ -112,6 +112,8 @@ function control(e) {
 	squares[pacmanCurrentIndex].classList.add('pacman')
 	pacDotEaten()
 	powerPelletEaten()
+	checkForWin()
+	checkForGameOver()
 }
 document.addEventListener('keyup', control)
 
@@ -179,14 +181,14 @@ function moveGhost(ghost){
 			!squares[ghost.currentIndex + direction].classList.contains("wall") &&
 			!squares[ghost.currentIndex + direction].classList.contains("ghost")
 			){
-		squares[ghost.currentIndex].classList.remove(ghost.className)
-		squares[ghost.currentIndex].classList.remove('ghost', 'scared-ghost')
-		ghost.currentIndex += direction
-		squares[ghost.currentIndex].classList.add(ghost.className)
-		squares[ghost.currentIndex].classList.add('ghost')
-	}else direction = directions[Math.floor(Math.random() * directions.length)]
+			squares[ghost.currentIndex].classList.remove(ghost.className)
+			squares[ghost.currentIndex].classList.remove('ghost', 'scared-ghost')
+			ghost.currentIndex += direction
+			squares[ghost.currentIndex].classList.add(ghost.className)
+			squares[ghost.currentIndex].classList.add('ghost')
+		}else direction = directions[Math.floor(Math.random() * directions.length)]
 	
-	//ghsot is scared
+	//ghost is scared
 	if(ghost.isScared){
 		squares[ghost.currentIndex].classList.add('scared-ghost')
 	}
@@ -203,7 +205,36 @@ function moveGhost(ghost){
 		//readd classnames of ghosts
 		squares[ghost.startIndex].classList.add(ghost.className, 'ghost')
 		}
-
+		checkForGameOver()
 	}, ghost.speed)
 }
 
+function checkForGameOver(){
+	//if pacman is in square with ghost that is not scared
+	if(
+		squares[pacmanCurrentIndex].classList.contains('ghost') &&
+		!squares[pacmanCurrentIndex].classList.contains('scared-ghost')
+		){
+		//for each ghost we need to stop it moving
+		ghosts.forEach(ghost => clearInterval(ghost.timerId))
+		squares[pacmanCurrentIndex].classList.remove('pacman')
+		//remove eventlistener for control function
+		document.removeEventListener('keyup', control)
+		//tell user game is over
+		scoreDisplay.innerHTML = 'GAME OVER'
+		}
+}
+
+
+//check for win
+
+function checkForWin() {
+	if (score === 274){
+		//stop each ghost
+		ghosts.forEach(ghost => clearInterval(ghost.timerId))
+		//remove eventlistener for control function
+		document.removeEventListener('keyup', control)
+		//tell our user we have won
+		scoreDisplay.innerHTML ='YOU WON!'
+	}
+}
