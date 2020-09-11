@@ -2,6 +2,7 @@ const width = 28
 const grid = document.querySelector(".grid")
 const scoreDisplay = document.querySelector("#score")
 let squares = []
+let score = 0
 
 //28 * 28 = 784
   // 0 - pac-dots
@@ -109,6 +110,30 @@ function control(e) {
         break
 	}
 	squares[pacmanCurrentIndex].classList.add('pacman')
+	pacDotEaten()
 }
 document.addEventListener('keyup', control)
 
+function pacDotEaten() {
+	if (squares[pacmanCurrentIndex].classList.contains("pac-dot")){
+		squares[pacmanCurrentIndex].classList.remove("pac-dot")
+		score++
+		scoreDisplay.innerHTML = score
+
+	}
+}
+	
+class Ghost {
+	constructor(className, startIndex, speed) {
+		this.className = className
+		this.startIndex = startIndex
+		this.speed = speed
+	}
+}
+
+ghost = [
+	new Ghost('blinky', 348, 250),
+	new Ghost('pinky', 376, 400),
+	new Ghost('inky', 351, 300),
+	new Ghost('clyde', 379, 500)
+]
